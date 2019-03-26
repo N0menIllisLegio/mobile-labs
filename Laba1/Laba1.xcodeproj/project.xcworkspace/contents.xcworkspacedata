@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <Group
+      location = "group:../Laba1"
+      name = "Assets.xcassets">
+      <Group
+         location = "group:placeholder_female.imageset"
+         name = "placeholder_female.imageset">
+         <FileRef
+            location = "group:Contents.json">
+         </FileRef>
+         <FileRef
+            location = "group:placeholder_female.png">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:AppIcon.appiconset"
+         name = "AppIcon.appiconset">
+         <FileRef
+            location = "group:Contents.json">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:placeholder_reg_fem.imageset"
+         name = "placeholder_reg_fem.imageset">
+         <FileRef
+            location = "group:Contents.json">
+         </FileRef>
+         <FileRef
+            location = "group:placeholder_reg_fem.png">
+         </FileRef>
+      </Group>
+      <FileRef
+         location = "group:Contents.json">
+      </FileRef>
+      <Group
+         location = "group:placeholder_reg_m.imageset"
+         name = "placeholder_reg_m.imageset">
+         <FileRef
+            location = "group:placeholder_reg_m.png">
+         </FileRef>
+         <FileRef
+            location = "group:Contents.json">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:placeholder_male.imageset"
+         name = "placeholder_male.imageset">
+         <FileRef
+            location = "group:placeholder_male.png">
+         </FileRef>
+         <FileRef
+            location = "group:Contents.json">
+         </FileRef>
+      </Group>
+   </Group>
+   <FileRef
+      location = "self:">
+   </FileRef>
+</Workspace>

@@ -1,0 +1,26 @@
+PODS:
+  - CryptoSwift (0.15.0)
+  - Realm (3.13.1):
+    - Realm/Headers (= 3.13.1)
+  - Realm/Headers (3.13.1)
+  - RealmSwift (3.13.1):
+    - Realm (= 3.13.1)
+
+DEPENDENCIES:
+  - CryptoSwift
+  - RealmSwift
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - CryptoSwift
+    - Realm
+    - RealmSwift
+
+SPEC CHECKSUMS:
+  CryptoSwift: 769f58a9e89f64e8796c2e59ce5f002dc81a2438
+  Realm: 50071da38fe079e0735e47c9f2eae738c68c5996
+  RealmSwift: 8a1e6a02b7a08cd17a31e3115143fb69fe5f3fb9
+
+PODFILE CHECKSUM: 0f5d3c0069ac4b3ff492e1a901163f360f640f4c
+
+COCOAPODS: 1.6.1
