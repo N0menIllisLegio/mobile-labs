@@ -11,6 +11,8 @@ import UIKit
 class UsersDetailsViewController: UIViewController {
     
     @IBOutlet weak var Photo: UIImageView!
+    @IBOutlet weak var displayProgress: UIProgressView!
+    @IBOutlet weak var loading: UIActivityIndicatorView!
     
     var UserInfo: Profile?
     var AddEditBarButton: Bool?
@@ -20,8 +22,8 @@ class UsersDetailsViewController: UIViewController {
     }
     
     func ReLoadData() {
-        if let data = UserInfo?.PhotoData {
-            Photo.image = UIImage(data: data)
+        if let photo = URL(string: UserInfo!.PhotoLink!) {
+            Photo.load(url: photo, indicator: loading)
             Photo.layer.masksToBounds = true
             Photo.layer.cornerRadius = 5
         } else {
@@ -47,7 +49,7 @@ class UsersDetailsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         
-        if  !(UserInfo?.isInvalidated)! && UserInfo != nil {
+        if  UserInfo != nil {
             ReLoadData()
         }
     }

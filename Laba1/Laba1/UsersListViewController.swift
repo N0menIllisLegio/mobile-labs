@@ -17,6 +17,8 @@ class UsersListViewController: UIViewController, UITableViewDelegate, UITableVie
     @IBOutlet weak var CurrentUserPatronymic: UILabel!
     @IBOutlet weak var CurrentUserSex: UILabel!
     @IBOutlet weak var PatronymicStack: UIStackView!
+    @IBOutlet weak var displayProgress: UIProgressView!
+    @IBOutlet weak var loadImageCurrentUser: UIActivityIndicatorView!
     
     var CurrentUser: Profile?
 
@@ -24,35 +26,23 @@ class UsersListViewController: UIViewController, UITableViewDelegate, UITableVie
     
     var Users = [Profile]()
     
-    func LoadData() {
-        if let User = CurrentUser {
-            CurrentUserSurname.text = User.Surname
-            CurrentUserName.text = User.Name
-            CurrentUserSex.text = User.Sex
-            
-            if let patronymic = CurrentUser?.Patronymic {
-                PatronymicStack.isHidden = false
-                CurrentUserPatronymic.text = patronymic
-            } else {
-                PatronymicStack.isHidden = true
-            }
-            
-            if let data = User.PhotoData {
-                CurrentUserPhoto.image = UIImage(data: data)
-                CurrentUserPhoto.layer.masksToBounds = true
-                CurrentUserPhoto.layer.cornerRadius = 5
-            } else {
-                if  User.Sex == "Man" {
-                    CurrentUserPhoto.image = UIImage(named: "placeholder_m")
-                } else {
-                    CurrentUserPhoto.image = UIImage(named: "placeholder_f")
-                }
-            }
+    let LoadData = {
+        (users: [Profile]?, error: Error?, controller: UIViewController, progress: Double?) in
+        let vc = controller as! UsersListViewController
+        
+        if users == nil && error == nil {
+            vc.displayProgress.progress = Float(progress!)
         }
         
-        Users = Array(UsersController.sharedInstance.GetAllUsers()).filter({(user: Profile) in return user.LogIn != CurrentUser?.LogIn})
-        
-        UsersTable.reloadData()
+        if let allUsers = users {
+            vc.Users = allUsers.filter { $0.LogIn != vc.CurrentUser!.LogIn }
+            vc.UsersTable.reloadData()
+            vc.displayProgress.isHidden = true
+        }
+        if error != nil {
+            vc.displayProgress.isHidden = true
+            print(error!)
+        }
     }
     
     func ConfigureCurrentUser() {
@@ -73,9 +63,37 @@ class UsersListViewController: UIViewController, UITableViewDelegate, UITableVie
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        if displayProgress.isHidden {
+            displayProgress.isHidden = false
+        }
         
-        if !(CurrentUser?.isInvalidated)! && CurrentUser != nil {
-            LoadData()
+        if CurrentUser != nil {
+            if let User = CurrentUser {
+                CurrentUserSurname.text = User.Surname
+                CurrentUserName.text = User.Name
+                CurrentUserSex.text = User.Sex
+                
+                if CurrentUser!.Patronymic != "" {
+                    PatronymicStack.isHidden = false
+                    CurrentUserPatronymic.text = CurrentUser!.Patronymic
+                } else {
+                    PatronymicStack.isHidden = true
+                }
+                
+                if let photo = URL(string: CurrentUser!.PhotoLink!) {
+                    CurrentUserPhoto.load(url: photo, indicator: loadImageCurrentUser)
+                    CurrentUserPhoto.layer.masksToBounds = true
+                    CurrentUserPhoto.layer.cornerRadius = 5
+                }  else {
+                    if  User.Sex == "Man" {
+                        CurrentUserPhoto.image = UIImage(named: "placeholder_m")
+                    } else {
+                        CurrentUserPhoto.image = UIImage(named: "placeholder_f")
+                    }
+                }
+            }
+            
+            UsersController.sharedInstance.GetAllUsers_firebase(controller: self, closure: LoadData)
         }
     }
     
@@ -109,8 +127,8 @@ class UsersListViewController: UIViewController, UITableViewDelegate, UITableVie
         
         cell.UsersName!.text = user.Name + " " + user.Surname
         
-        if let data = user.PhotoData {
-            cell.UsersPhoto!.image = UIImage(data: data)
+        if let photo = URL(string: user.PhotoLink!) {
+            cell.UsersPhoto!.load(url: photo, indicator: cell.loading)
             cell.UsersPhoto!.layer.masksToBounds = true
             cell.UsersPhoto!.layer.cornerRadius = 5
         } else {
@@ -130,7 +148,7 @@ class UsersListViewController: UIViewController, UITableViewDelegate, UITableVie
             let DeleteAlert = UIAlertController(title: "Delete", message: "All data of this user will be lost.", preferredStyle: UIAlertController.Style.alert)
             
             DeleteAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
-                UsersController.sharedInstance.DeleteUser(User: self.Users[indexPath.row])
+                UsersController.sharedInstance.DeleteUser_firebase(User: self.Users[indexPath.row])
                 self.Users.remove(at: indexPath.row)
                 self.UsersTable.deleteRows(at: [indexPath], with: .automatic)
             }))

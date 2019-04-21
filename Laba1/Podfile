@@ -6,7 +6,8 @@ target 'Laba1' do
   use_frameworks!
 
   # Pods for Laba1
-  pod 'RealmSwift'
   pod 'CryptoSwift'
+  pod 'SwiftyJSON'
+  pod 'Alamofire'
 
 end

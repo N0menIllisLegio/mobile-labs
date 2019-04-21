@@ -23,6 +23,8 @@ class SignUpViewController: UIViewController {
     @IBOutlet weak var PhotoView: UIImageView!
     @IBOutlet weak var BirthDateSwitcher: UISwitch!
     @IBOutlet weak var LoginLabel: UILabel!
+    @IBOutlet weak var displayProgress: UIProgressView!
+    @IBOutlet weak var loading: UIActivityIndicatorView!
     
     var EditUser = false
     var UserEdit = Profile()
@@ -30,6 +32,30 @@ class SignUpViewController: UIViewController {
     var standartImage = true
     var imagePicker = UIImagePickerController()
     var alert = UIAlertController(title: "Warning", message: "message", preferredStyle: .alert)
+    
+    var Response = {
+        (status: Bool?, error: Error?, controller: UIViewController, progress: Double?) in
+            let vc = controller as! SignUpViewController
+        
+            if status == nil && error == nil {
+                vc.displayProgress.progress = Float(progress!)
+            }
+        
+            if status != nil {
+                vc.displayProgress.isHidden = true
+                if (status!) {
+                    vc.navigationController?.popViewController(animated: true)
+                } else {
+                    vc.alert.message = "User with this login already exists!"
+                    vc.present(vc.alert, animated: true, completion: nil)
+                }
+            }
+        
+            if error != nil {
+                vc.displayProgress.isHidden = true
+                print(error!)
+            }
+    }
     
     func SetEdit() {
         LoginLabel.isHidden = true
@@ -51,8 +77,8 @@ class SignUpViewController: UIViewController {
             DatePicker.isHidden = true
         }
         
-        if let photo = UserEdit.PhotoData {
-            PhotoView.image = UIImage(data: photo)
+        if let photo = URL(string: UserEdit.PhotoLink!) {
+            PhotoView.load(url: photo, indicator: loading)
             standartImage = false
         } else {
             SexChanged(self)
@@ -84,9 +110,7 @@ class SignUpViewController: UIViewController {
         DatePicker.layer.backgroundColor = UIColor.white.cgColor
     }
     
-    func SignUp() -> Bool {
-        var signedUp = false
-        
+    func SignUp() {
         LoginField.text      = LoginField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
         SurnameField.text    = SurnameField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
         NameField.text       = NameField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -101,22 +125,25 @@ class SignUpViewController: UIViewController {
                 User.LogIn = LoginField.text!
                 User.Password = PasswordField.text!.sha256()
                 
-                User.Patronymic = PatronymicField.text == "" ? nil : PatronymicField.text
+                User.Patronymic = PatronymicField.text
                 User.BirthDate = BirthDateSwitcher.isOn ? DatePicker.date : nil
-                User.Place = LocationField.text == "" ? nil : LocationField.text
+                User.Place = LocationField.text
                 User.Sex = GenderControl.selectedSegmentIndex == 0 ? "Man" : "Woman"
-                User.PhotoData = PhotoView.image?.pngData()
+                let photoData = PhotoView.image!.pngData()!
                 
                 if EditUser {
-                    signedUp = UsersController.sharedInstance.UpdateUser(User: User)
+                    UserEdit.Name = NameField.text!
+                    UserEdit.Surname = SurnameField.text!
+                    UserEdit.Patronymic = PatronymicField.text!
+                    UserEdit.Password = PasswordField.text!.sha256()
+                    UserEdit.Place = LocationField.text!
+                    UserEdit.Sex = GenderControl.selectedSegmentIndex == 0 ? "Man" : "Woman"
+                    UserEdit.BirthDate = BirthDateSwitcher.isOn ? DatePicker.date : nil
+                    
+                    UsersController.sharedInstance.UpdateUser_firebase(updUser: UserEdit, photo: photoData, controller: self, closure: Response)
                 } else {
-                    signedUp = UsersController.sharedInstance.AddUser(User: User)
-                    if !signedUp {
-                        alert.message = "User with this login already exists!"
-                        present(alert, animated: true, completion: nil)
-                    }
+                    UsersController.sharedInstance.AddUser_firebase(newUser: User, photo: photoData, controller: self, closure: Response)
                 }
-                
             } else {
                 alert.message = "Fields with * should be filled!"
                 present(alert, animated: true, completion: nil)
@@ -125,8 +152,6 @@ class SignUpViewController: UIViewController {
             alert.message = "Passwords are not coincide!"
             present(alert, animated: true, completion: nil)
         }
-        
-        return signedUp
     }
     
     @IBAction func SexChanged(_ sender: Any) {
@@ -148,9 +173,11 @@ class SignUpViewController: UIViewController {
     }
     
     @IBAction func Save(_ sender: Any) {
-        if SignUp() {
-            navigationController?.popViewController(animated: true)
+        if displayProgress.isHidden {
+            displayProgress.isHidden = false
         }
+        
+        SignUp()
     }
     
     @IBAction func enableBirthDate(_ sender: Any) {

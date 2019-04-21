@@ -26,9 +26,17 @@ class UserInfoTableViewController: UITableViewController {
         Name.text = UserInfo.Name
         Sex.text = UserInfo.Sex
         
-        print("Patronimic " + (UserInfo.Patronymic ?? "-"))
-        Patronymic.text = UserInfo.Patronymic ?? "-"
-        Location.text = UserInfo.Place ?? "-"
+        if  UserInfo.Patronymic != "" {
+            Patronymic.text = UserInfo.Patronymic
+        } else {
+             Patronymic.text = "-"
+        }
+        
+        if UserInfo.Place != "" {
+            Location.text = UserInfo.Place
+        } else {
+            Location.text = "-"
+        }
         
         if UserInfo.BirthDate != nil {
             let dateFormatter = DateFormatter()

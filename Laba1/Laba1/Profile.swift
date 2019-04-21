@@ -20,7 +20,8 @@ class Profile: Object {
     @objc dynamic var Patronymic: String? = nil
     @objc dynamic var BirthDate: Date? = nil
     @objc dynamic var Place: String? = nil
-    @objc dynamic var PhotoData: Data? = nil
+    @objc dynamic var PhotoLink: String? = nil
+    @objc dynamic var DeleteHash: String? = nil
     
     override static func primaryKey() -> String? {
         return "LogIn"
