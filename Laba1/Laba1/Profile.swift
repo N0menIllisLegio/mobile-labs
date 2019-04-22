@@ -7,23 +7,17 @@
 //
 
 import UIKit
-import RealmSwift
 
-class Profile: Object {
+class Profile: NSObject {
+    var LogIn: String = ""
+    var Password: String = ""
+    var Name: String = ""
+    var Surname: String = ""
+    var Sex: String = ""
     
-    @objc dynamic var LogIn: String = ""
-    @objc dynamic var Password: String = ""
-    @objc dynamic var Name: String = ""
-    @objc dynamic var Surname: String = ""
-    @objc dynamic var Sex: String = ""
-    
-    @objc dynamic var Patronymic: String? = nil
-    @objc dynamic var BirthDate: Date? = nil
-    @objc dynamic var Place: String? = nil
-    @objc dynamic var PhotoLink: String? = nil
-    @objc dynamic var DeleteHash: String? = nil
-    
-    override static func primaryKey() -> String? {
-        return "LogIn"
-    }
+    var Patronymic: String? = nil
+    var BirthDate: Date? = nil
+    var Place: String? = nil
+    var PhotoLink: String? = nil
+    var DeleteHash: String? = nil
 }
