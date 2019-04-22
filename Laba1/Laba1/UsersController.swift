@@ -15,9 +15,7 @@ class UsersController: NSObject {
     let firestore = "YOUR FIRESTORE PATH"
     let imgurAccountName = "YOUR IMGUR LOGIN"
     static let sharedInstance = UsersController()
-    
-    static let sharedInstance = UsersController()
-    
+        
     func DeletePhoto(deleteHash: String) {
         let headers: HTTPHeaders = [
             "Authorization": "Bearer " + token
