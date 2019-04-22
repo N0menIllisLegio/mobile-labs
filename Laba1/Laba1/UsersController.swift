@@ -11,9 +11,10 @@ import Alamofire
 import SwiftyJSON
 
 class UsersController: NSObject {
-    let token = "e82c1c5493382bb562ba2a3d90acc2fa2e526ce0"
+    let token = "YOUR IMGUR TOKEN"
     let firestore = "https://firestore.googleapis.com/v1/projects/rpodmp-lab-3/databases/(default)/documents/Users"
     let imgurAccountName = "nomenillislegio"
+    static let sharedInstance = UsersController()
     
     static let sharedInstance = UsersController()
     
