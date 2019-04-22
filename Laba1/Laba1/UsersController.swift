@@ -12,15 +12,17 @@ import SwiftyJSON
 
 class UsersController: NSObject {
     let token = "e82c1c5493382bb562ba2a3d90acc2fa2e526ce0"
-    static let sharedInstance = UsersController()
+    let firestore = "https://firestore.googleapis.com/v1/projects/rpodmp-lab-3/databases/(default)/documents/Users"
+    let imgurAccountName = "nomenillislegio"
     
+    static let sharedInstance = UsersController()
     
     func DeletePhoto(deleteHash: String) {
         let headers: HTTPHeaders = [
             "Authorization": "Bearer " + token
         ]
         
-        Alamofire.request("https://api.imgur.com/3/account/nomenillislegio/image/" + deleteHash, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+        Alamofire.request("https://api.imgur.com/3/account/" + imgurAccountName + "/image/" + deleteHash, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
             .responseJSON {
                 response in
                 print(response)
@@ -52,7 +54,7 @@ class UsersController: NSObject {
     
     func DeleteUser_firebase(User: Profile) {
         DeletePhoto(deleteHash: User.DeleteHash!)
-        Alamofire.request("https://firestore.googleapis.com/v1/projects/rpodmp-lab-3/databases/(default)/documents/Users/" + User.LogIn, method: .delete, parameters: nil)
+        Alamofire.request(firestore + "/" + User.LogIn, method: .delete, parameters: nil)
             .responseJSON{ response in
                 print(response)
         }
@@ -71,7 +73,7 @@ class UsersController: NSObject {
         let uploadClosure = {
             (link: String?, error: Error?, deleteHash: String?) in
             if link != nil {
-                Alamofire.request("https://firestore.googleapis.com/v1/projects/rpodmp-lab-3/databases/(default)/documents/Users/" + updUser.LogIn + "?updateMask.fieldPaths=PhotoLink&updateMask.fieldPaths=DeleteHash", method: .patch, parameters: ["fields" : ["PhotoLink": ["stringValue": link!], "DeleteHash":["stringValue": deleteHash!]]], encoding: JSONEncoding.default, headers: nil )
+                Alamofire.request(self.firestore + "/" + updUser.LogIn + "?updateMask.fieldPaths=PhotoLink&updateMask.fieldPaths=DeleteHash", method: .patch, parameters: ["fields" : ["PhotoLink": ["stringValue": link!], "DeleteHash":["stringValue": deleteHash!]]], encoding: JSONEncoding.default, headers: nil )
                     .responseJSON
                     { response in
                         switch response.result {
@@ -120,7 +122,7 @@ class UsersController: NSObject {
         ]
         
         // Можно конкретно задавать какие поля менять указывая: ?updateMask.fieldPaths=Name&updateMask.fieldPaths=Password&...
-        Alamofire.request("https://firestore.googleapis.com/v1/projects/rpodmp-lab-3/databases/(default)/documents/Users/" + updUser.LogIn + "", method: .patch, parameters: fields, encoding: JSONEncoding.default, headers: nil )
+        Alamofire.request(firestore + "/" + updUser.LogIn, method: .patch, parameters: fields, encoding: JSONEncoding.default, headers: nil )
             .downloadProgress
             { progress in
                 closure(nil, nil, controller, progress.fractionCompleted)
@@ -151,7 +153,7 @@ class UsersController: NSObject {
         let uploadClosure = {
             (link: String?, error: Error?, deleteHash: String?) in
             if link != nil {
-                Alamofire.request("https://firestore.googleapis.com/v1/projects/rpodmp-lab-3/databases/(default)/documents/Users/" + newUser.LogIn + "?updateMask.fieldPaths=PhotoLink&updateMask.fieldPaths=DeleteHash", method: .patch, parameters: ["fields" : ["PhotoLink": ["stringValue": link!], "DeleteHash":["stringValue": deleteHash!]]], encoding: JSONEncoding.default, headers: nil )
+                Alamofire.request(self.firestore + "/" + newUser.LogIn + "?updateMask.fieldPaths=PhotoLink&updateMask.fieldPaths=DeleteHash", method: .patch, parameters: ["fields" : ["PhotoLink": ["stringValue": link!], "DeleteHash":["stringValue": deleteHash!]]], encoding: JSONEncoding.default, headers: nil )
                     .responseJSON
                     { response in
                         switch response.result {
@@ -197,7 +199,7 @@ class UsersController: NSObject {
             ]
         ]
         
-        Alamofire.request("https://firestore.googleapis.com/v1/projects/rpodmp-lab-3/databases/(default)/documents/Users?documentId=" + newUser.LogIn, method: .post, parameters: fields, encoding: JSONEncoding.default, headers: nil )
+        Alamofire.request(firestore + "?documentId=" + newUser.LogIn, method: .post, parameters: fields, encoding: JSONEncoding.default, headers: nil )
             .downloadProgress
             { progress in
                 closure(nil, nil, controller, progress.fractionCompleted)
@@ -237,7 +239,7 @@ class UsersController: NSObject {
     }
     
     func GetUser_firebase(id: String, controller: UIViewController, closure: @escaping (Profile?, Error?, UIViewController, Double?) -> Void) {
-        Alamofire.request("https://firestore.googleapis.com/v1/projects/rpodmp-lab-3/databases/(default)/documents/Users/" + id)
+        Alamofire.request(firestore + "/" + id)
             .downloadProgress
             { progress in
                 closure(nil, nil, controller, progress.fractionCompleted)
@@ -255,7 +257,7 @@ class UsersController: NSObject {
     }
     
     func GetAllUsers_firebase(controller: UIViewController, closure: @escaping ([Profile]?, Error?, UIViewController, Double?) -> Void) {
-        Alamofire.request("https://firestore.googleapis.com/v1/projects/rpodmp-lab-3/databases/(default)/documents/Users")
+        Alamofire.request(firestore)
             .downloadProgress
             { progress in
                 closure(nil, nil, controller, progress.fractionCompleted)

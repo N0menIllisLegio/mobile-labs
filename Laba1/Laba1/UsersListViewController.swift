@@ -10,7 +10,7 @@ import UIKit
 
 class UsersListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    @IBOutlet weak var CurrentUserBcView: UIView!
+//    @IBOutlet weak var CurrentUserBcView: UIView!
     @IBOutlet weak var CurrentUserPhoto: UIImageView!
     @IBOutlet weak var CurrentUserSurname: UILabel!
     @IBOutlet weak var CurrentUserName: UILabel!
@@ -45,18 +45,9 @@ class UsersListViewController: UIViewController, UITableViewDelegate, UITableVie
         }
     }
     
-    func ConfigureCurrentUser() {
-        CurrentUserBcView.layer.masksToBounds = false
-        CurrentUserBcView.layer.shadowColor = UsersTable.separatorColor?.cgColor
-        CurrentUserBcView.layer.shadowOffset = CGSize(width: 0.0, height: 1.0)
-        CurrentUserBcView.layer.shadowOpacity = 1.0
-        CurrentUserBcView.layer.shadowRadius = 0.0
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        ConfigureCurrentUser()
         UsersTable.delegate = self
         UsersTable.dataSource = self
     }
