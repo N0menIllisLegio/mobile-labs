@@ -11,7 +11,7 @@ import Alamofire
 import SwiftyJSON
 
 class UsersController: NSObject {
-    let token = "e82c1c5493382bb562ba2a3d90acc2fa2e526ce0"
+    let token = "YOUR IMGUR TOKEN"
     static let sharedInstance = UsersController()
     
     
