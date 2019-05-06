@@ -12,7 +12,7 @@ import SwiftyJSON
 
 class UsersController: NSObject {
     let token = "YOUR IMGUR TOKEN"
-    let firestore = "YOUR FIRESTORE PATH"
+    let firestore = "https://firestore.googleapis.com/v1/projects/YOUR_PROJECT_ID/databases/(default)/documents/cities/LA"
     let imgurAccountName = "YOUR IMGUR LOGIN"
     static let sharedInstance = UsersController()
         
