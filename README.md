@@ -3,7 +3,7 @@
 LAB 3
 
   1. https://apidocs.imgur.com -  Auth app in imgur, get token and account name.
-  2. https://firebase.google.com - Register in firestore, create DB and collection (for storing Users).
+  2. https://firebase.google.com - Register in firebase, create Cloud firestore DB and collection (for storing Users).
   3. Fill token, imgur account name, Project id and DB collection name in UsersController.swift:
   
   ```swift
