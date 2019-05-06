@@ -7,7 +7,8 @@ LAB 3
   3. Fill token, username, Project id and DB collection name in UsersController.swift:
   
   ```swift
-  let token = "YOUR_IMGUR_TOKEN"
-  let firestore = "https://firestore.googleapis.com/v1/projects/YOUR_PROJECT_ID/databases/(default)/documents/YOUR_USERS_COLLECTION"
-  let imgurAccountName = "YOUR_IMGUR_LOGIN"
+    let token = "YOUR_IMGUR_TOKEN"
+    let imgurAccountName = "YOUR_IMGUR_LOGIN"
+    let projectId = "YOUR_PROJECT_ID"
+    let usersCollection = "YOUR_USERS_COLLECTION"
   ```
