@@ -10,7 +10,6 @@ import UIKit
 
 class UsersListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-//    @IBOutlet weak var CurrentUserBcView: UIView!
     @IBOutlet weak var CurrentUserPhoto: UIImageView!
     @IBOutlet weak var CurrentUserSurname: UILabel!
     @IBOutlet weak var CurrentUserName: UILabel!
@@ -25,6 +24,7 @@ class UsersListViewController: UIViewController, UITableViewDelegate, UITableVie
     @IBOutlet weak var UsersTable: UITableView!
     
     var Users = [Profile]()
+    var delUserPath: IndexPath?
     
     let LoadData = {
         (users: [Profile]?, error: Error?, controller: UIViewController, progress: Double?) in
@@ -48,12 +48,23 @@ class UsersListViewController: UIViewController, UITableViewDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let vc = (parent?.parent?.children[1] as? UINavigationController)?.topViewController as? UsersDetailsViewController
+        
+        vc?.UserInfo = self.CurrentUser
+        vc?.AddEditBarButton = true
+        
         UsersTable.delegate = self
         UsersTable.dataSource = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        
+        if delUserPath != nil {
+            deleteUser(_indexPath: delUserPath)
+            delUserPath = nil
+        }
+        
         if displayProgress.isHidden {
             displayProgress.isHidden = false
         }
@@ -89,16 +100,18 @@ class UsersListViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "currentUserDetails", let destination = segue.destination as? UsersDetailsViewController {
+        if segue.identifier == "currentUserDetails", let destination = (segue.destination as? UINavigationController)?.topViewController as? UsersDetailsViewController {
             
             destination.UserInfo = CurrentUser
             destination.AddEditBarButton = true
+            destination.UsersIndexPath = UsersTable.indexPathForSelectedRow
         }
         
-        if segue.identifier == "tableUserDetails", let destination = segue.destination as? UsersDetailsViewController {
+        if segue.identifier == "tableUserDetails", let destination = (segue.destination as? UINavigationController)?.topViewController as? UsersDetailsViewController {
 
             destination.AddEditBarButton = false
             destination.UserInfo = Users[UsersTable.indexPathForSelectedRow!.row]
+            destination.UsersIndexPath = UsersTable.indexPathForSelectedRow
         }
     }
     
@@ -133,24 +146,45 @@ class UsersListViewController: UIViewController, UITableViewDelegate, UITableVie
         return cell
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            
-            let DeleteAlert = UIAlertController(title: "Delete", message: "All data of this user will be lost.", preferredStyle: UIAlertController.Style.alert)
-            
-            DeleteAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
+    func deleteUser(_indexPath: IndexPath?) {
+        let DeleteAlert = UIAlertController(title: "Delete", message: "All data of this user will be lost.", preferredStyle: UIAlertController.Style.alert)
+        
+        DeleteAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
+            if let indexPath = _indexPath {
+                self.performSegue(withIdentifier: "currentUserDetails", sender: self)
+                
                 UsersController.sharedInstance.DeleteUser_firebase(User: self.Users[indexPath.row])
                 self.Users.remove(at: indexPath.row)
                 self.UsersTable.deleteRows(at: [indexPath], with: .automatic)
-            }))
-            
-            DeleteAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in return }))
-            
-            present(DeleteAlert, animated: true, completion: nil)
-        }
+            }
+        }))
+        
+        DeleteAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in return }))
+        
+        present(DeleteAlert, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "ALL USERS"
     }
+    
+    @IBAction func logOut(_ sender: Any) {
+        if splitViewController?.viewControllers.count ?? 1 > 1 {
+            let vc = (splitViewController?.viewControllers[1] as? UINavigationController)?.topViewController
+            vc?.dismiss(animated: true, completion: nil)
+        } else {
+            dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func Add(_ sender: Any) {
+        if splitViewController?.viewControllers.count ?? 1 > 1 {
+            let vc = (splitViewController?.viewControllers[1] as? UINavigationController)?.topViewController
+            vc?.performSegue(withIdentifier: "addUser", sender: vc!)
+        } else {
+            performSegue(withIdentifier: "addUser", sender: self)
+        }
+    }
+    
+    @IBAction func deleteUser(segue: UIStoryboardSegue) { }
 }

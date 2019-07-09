@@ -25,6 +25,8 @@ class SignUpViewController: UIViewController {
     @IBOutlet weak var LoginLabel: UILabel!
     @IBOutlet weak var displayProgress: UIProgressView!
     @IBOutlet weak var loading: UIActivityIndicatorView!
+    @IBOutlet weak var SaveButton: UIBarButtonItem!
+    @IBOutlet weak var BackButton: UIBarButtonItem!
     
     var EditUser = false
     var UserEdit = Profile()
@@ -42,16 +44,20 @@ class SignUpViewController: UIViewController {
             }
         
             if status != nil {
-                vc.displayProgress.isHidden = true
                 if (status!) {
-                    vc.navigationController?.popViewController(animated: true)
+                    vc.view.window?.isUserInteractionEnabled = true
+                    vc.displayProgress.isHidden = true
+                    vc.dismiss(animated: true, completion: nil)
                 } else {
+                    vc.view.window?.isUserInteractionEnabled = true
+                    vc.displayProgress.isHidden = true
                     vc.alert.message = "User with this login already exists!"
                     vc.present(vc.alert, animated: true, completion: nil)
                 }
             }
         
             if error != nil {
+                vc.view.window?.isUserInteractionEnabled = true
                 vc.displayProgress.isHidden = true
                 print(error!)
             }
@@ -147,10 +153,18 @@ class SignUpViewController: UIViewController {
             } else {
                 alert.message = "Fields with * should be filled!"
                 present(alert, animated: true, completion: nil)
+                view.window?.isUserInteractionEnabled = true
+                if !displayProgress.isHidden {
+                    displayProgress.isHidden = true
+                }
             }
         } else {
             alert.message = "Passwords are not coincide!"
             present(alert, animated: true, completion: nil)
+            view.window?.isUserInteractionEnabled = true
+            if !displayProgress.isHidden {
+                displayProgress.isHidden = true
+            }
         }
     }
     
@@ -177,7 +191,15 @@ class SignUpViewController: UIViewController {
             displayProgress.isHidden = false
         }
         
+        view.window?.isUserInteractionEnabled = false
         SignUp()
+    }
+    
+    
+    
+    @IBAction func Back(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+//        navigationController?.pop(animated: true)
     }
     
     @IBAction func enableBirthDate(_ sender: Any) {

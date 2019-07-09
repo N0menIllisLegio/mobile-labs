@@ -54,14 +54,6 @@ class LogInViewController: UIViewController {
         SignUpButton.layer.borderColor = UIColor.black.cgColor
         SignUpButton.layer.borderWidth = 0.1
         SignUpButton.layer.cornerRadius = 5
-        
-//        let User = Profile()
-//        User.LogIn = "Gadfly"
-//        User.DeleteHash = "VTSl35q9CmhGPde"
-//
-//        UsersController.sharedInstance.DeleteUser_firebase(User: User)
-//        print(UIImage(named: "placeholder_m")!.pngData()!.base64EncodedString())
-//        UsersController.sharedInstance.UploadPhoto(data: UIImage(named: "placeholder_f")!.pngData()!)
     }
     
     override func viewDidLoad() {
@@ -87,8 +79,9 @@ class LogInViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
           if segue.identifier == "logIn" {
-            let destination = segue.destination as? UsersListViewController
+            let destination = ((segue.destination as? UISplitViewController)?.children[0] as? UINavigationController)?.topViewController as? UsersListViewController
             destination?.CurrentUser = LoggedUser
+            LoggedUser = nil
         }
     }
     
@@ -96,4 +89,6 @@ class LogInViewController: UIViewController {
         super.viewWillDisappear(true)
         self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
+    
+    
 }

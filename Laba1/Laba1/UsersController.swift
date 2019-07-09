@@ -11,11 +11,11 @@ import Alamofire
 import SwiftyJSON
 
 class UsersController: NSObject {
-    let token = "YOUR IMGUR TOKEN"
-    let firestore = "YOUR FIRESTORE PATH"
-    let imgurAccountName = "YOUR IMGUR LOGIN"
+    let token = "imgurToken"
+    let firestore = "https://firestore.googleapis.com/v1/projects/projectID/databases/(default)/documents/collectionName"
+    let imgurAccountName = "imgurUserName" // not email
     static let sharedInstance = UsersController()
-        
+    
     func DeletePhoto(deleteHash: String) {
         let headers: HTTPHeaders = [
             "Authorization": "Bearer " + token
